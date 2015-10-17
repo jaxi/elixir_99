@@ -273,7 +273,6 @@ defmodule Elixir_99 do
       end
     end)
   end
-  defp run_length_list([], nil), do: []
   defp run_length_list([], {c, e}), do: [{c, e}]
   defp run_length_list([h|t], nil), do: encode_list(t, {1, h})
   defp run_length_list([h|t], {c, e}) do
@@ -318,4 +317,87 @@ defmodule Elixir_99 do
     Enum.map(l, (fn(ele) -> List.duplicate(ele, n) end))
     |> List.flatten
   end
+
+  @doc ~S"""
+  P16 (**) Drop every N'th element from a list.
+
+  ## Examples
+    iex> Elixir_99.drop [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 3
+    [1, 2, 4, 5, 7, 8, 10]
+
+    iex> Elixir_99.drop [1, 2, 3], -1
+    [1, 2, 3]
+
+    iex> Elixir_99.drop [1, 2, 3], 4
+    [1, 2, 3]
+  """
+  @spec drop(list, integer) :: list
+  def drop(l, i) when i <= 0 do
+    l
+  end
+  def drop(l, n) do
+    l |> Enum.with_index |> Enum.filter_map (fn(e) ->
+      {_, i } = e
+      rem(i + 1, n) != 0
+    end), (fn(e) ->
+      {ele, _} = e
+      ele
+    end)
+  end
+
+  @doc ~S"""
+  P17 (*) Split a list into two parts;
+  the length of the first part is given.
+
+  ## Examples
+    iex> Elixir_99.split [:a, :b, :c, :d, :e, :f, :g, :h, :i, :j], 3
+    [[:a, :b, :c], [:d, :e, :f, :g, :h, :i, :j]]
+
+    iex> Elixir_99.split [:a, :b, :c], 3
+    [[:a, :b, :c], []]
+
+    iex> Elixir_99.split [:a, :b, :c], 4
+    [[:a, :b, :c], []]
+
+    iex> Elixir_99.split [:a, :b, :c], 0
+    [[], [:a, :b, :c]]
+
+    iex> Elixir_99.split [:a, :b, :c], -2
+    [[], [:a, :b, :c]]
+  """
+  @spec split(list, integer) :: list
+  def split(l, i), do: split_list([], l, i)
+  defp split_list(l1, l2, i) when i <= 0 do
+    [l1, l2]
+  end
+  defp split_list(l1, [], i), do: [l1, []]
+  defp split_list(l1, [h|t], i), do: split_list(l1 ++ [h], t, i - 1)
+
+  @doc ~S"""
+  P18 (**) Extract a slice from a list.
+
+  Examples:
+    iex> Elixir_99.slice [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 3, 7
+    [3, 4, 5, 6, 7]
+
+    iex> Elixir_99.slice [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 3, 2
+    []
+
+    iex> Elixir_99.slice [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], -3, 2
+    []
+  """
+  @spec slice(list, integer, integer) :: list
+  def slice(l, i, j), do: slice_list(l, i, j)
+  defp slice_list(_, i, j) when (i > j or i <= 0) do
+    []
+  end
+  defp slice_list([_|t], i, j) when i > 1 do
+    slice_list(t, i - 1, j - 1)
+  end
+  defp slice_list(l, _, j) do
+    take([], l, j)
+  end
+  defp take(r, [], n), do: r
+  defp take(r, _, 0), do: r
+  defp take(r, [h|t], n), do: take(r ++ [h], t, n - 1)
 end
