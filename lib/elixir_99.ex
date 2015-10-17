@@ -240,4 +240,82 @@ defmodule Elixir_99 do
       end
     end)
   end
+  @doc ~S"""
+  P12 (**) Decode a run-length encoded list.
+
+  ## Examples
+    iex> Elixir_99.decode [{4, :a}, :b , {2, :c}, {2, :a}, :d, {4, :e}]
+    [:a, :a, :a, :a, :b, :c, :c, :a, :a, :d, :e, :e, :e, :e ]
+  """
+  @spec decode(list) :: list
+  def decode(l) do
+    (Enum.map l, (fn(elem) ->
+      case elem do
+        {c, e} -> List.duplicate(e, c)
+        _ -> [elem]
+      end
+    end)) |> List.flatten
+  end
+
+  @doc ~S"""
+  # P13 (**) Run-length encoding of a list (direct solution).
+
+  ## Examples
+    iex> Elixir_99.run_length [:a, :a, :a, :a, :b, :c, :c, :a, :a, :d, :e, :e, :e, :e ]
+    [{4, :a}, :b , {2, :c}, {2, :a}, :d, {4, :e}]
+  """
+  @spec run_length(list) :: list
+  def run_length(l) do
+    Enum.map encode_list(l, nil), (fn(elem) ->
+      case elem do
+        {1, e} -> e
+        e -> e
+      end
+    end)
+  end
+  defp run_length_list([], nil), do: []
+  defp run_length_list([], {c, e}), do: [{c, e}]
+  defp run_length_list([h|t], nil), do: encode_list(t, {1, h})
+  defp run_length_list([h|t], {c, e}) do
+    cond do
+      h == e -> encode_list(t, {c+1, e})
+      true -> [{c, e} | encode_list([h|t], nil)]
+    end
+  end
+
+  @doc ~S"""
+  # P14 (*) Duplicate the elements of a list.
+
+  ## Examples
+    iex> Elixir_99.dupli []
+    []
+
+    iex> Elixir_99.dupli [1, 2, 3, 3, 4]
+    [1, 1, 2, 2, 3, 3, 3, 4, 4]
+
+    iex> Elixir_99.dupli [1, 2, 3, 3, 4, 4]
+    [1, 1, 2, 2, 3, 3, 3, 4, 4, 4]
+  """
+  @spec dupli(list) :: list
+  def dupli([]), do: []
+  def dupli([h]), do: [h, h]
+  def dupli([h1, h2 | t]) do
+    cond do
+      h1 == h2 -> [h1 | dupli([h2|t])]
+      true -> [h1, h1 | dupli([h2|t])]
+    end
+  end
+
+  @doc ~S"""
+  P15 (**) Replicate the elements of a list a given number of times.
+
+  ## Examples
+    iex> Elixir_99.repli [1, 2, 3], 3
+    [1, 1, 1, 2, 2, 2, 3, 3, 3]
+  """
+  @spec repli(list, integer) :: list
+  def repli(l, n) do
+    Enum.map(l, (fn(ele) -> List.duplicate(ele, n) end))
+    |> List.flatten
+  end
 end
