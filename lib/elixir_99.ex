@@ -524,4 +524,76 @@ defmodule Elixir_99 do
   """
   @spec lotto_select(integer, integer) :: list
   def lotto_select(n, m), do: range(1, m) |> rnd_select n
+
+  @doc ~S"""
+  P25 (*) Generate a random permutation of the elements of a list.
+
+  ## Examples
+    iex> Elixir_99.rnd_permu([:a, :b, :c, :d, :e, :f]) |> length
+    6
+  """
+  @spec rnd_permu(list) :: list
+  def rnd_permu(l), do: rnd_select(l, length(l))
+
+  @doc ~S"""
+  P26 (**) Generate the combinations of K distinct objects chosen from the N elements of a list
+
+  ## Examples
+    iex> Elixir_99.combination([:a, :b, :c, :d, :e, :f] , 1) |> length
+    6
+
+    iex> Elixir_99.combination([:a, :b, :c, :d, :e, :f] , 2) |> length
+    15
+
+    iex> Elixir_99.combination([:a, :b, :c, :d, :e, :f] , 3) |> length
+    20
+  """
+  @spec combination(list, integer) :: list
+  def combination(l, k), do: combination(l, k, [], [])
+  defp combination(l, k, res, proto) when k > length(l) + length(proto) do
+    res
+  end
+  defp combination(_, k, res, proto) when length(proto) == k do
+    res ++ [proto]
+  end
+  defp combination([h|t], k, res, proto) do
+    combination(t, k, res, proto ++ [h]) ++ combination(t, k, res, proto)
+  end
+
+  @doc ~S"""
+  P27 (**) Group the elements of a set into disjoint subsets.
+
+  ## Examples
+  """
+
+  @spec group(list, list) :: list
+  def group(l, s), do: group(l, s, [], List.duplicate([], length(s)))
+  defp group(l, s, res, proto) do
+    cond do
+      filled?(s, proto) ->
+        res ++ [proto]
+      capacity(proto) + length(l) < Enum.sum(s)  or exceed_capacity?(s, proto) ->
+        res
+      true ->
+        [h|t] = l
+        Enum.reduce possible_fill(proto, h), group(t, s, res, proto), (
+          fn(x, acc) -> acc ++ group(t, s, res, x)
+        end)
+    end
+  end
+  defp possible_fill(l, ele) do
+    l |> Enum.with_index |> Enum.map (fn({e, index}) ->
+      List.update_at l, index, (fn(_) -> e ++ [ele] end)
+    end)
+  end
+  defp filled?(subset, comb) do
+    List.zip([subset, comb]) |> Enum.all?(fn({s, c}) -> s == length(c) end)
+  end
+  defp exceed_capacity?(subset, comb) do
+    List.zip([subset, comb]) |> Enum.any?(fn({s, c}) -> s < length(c) end)
+  end
+  def capacity(comb) do
+    Enum.map(comb, fn(c) -> length(c) end)
+    |> Enum.reduce (fn(x, acc) -> x + acc end)
+  end
 end
