@@ -490,4 +490,38 @@ defmodule Elixir_99 do
     []
   end
   def range(i, j), do: [i | range(i + 1, j)]
+
+  @doc ~S"""
+  P23 (**) Extract a given number of randomly selected elements from a list.
+
+  ## Examples
+    iex> Elixir_99.rnd_select([:a, :b, :c, :d, :e, :f, :g, :h], 3) |> length
+    3
+  """
+  @spec rnd_select(list, integer) :: list
+  def rnd_select(l, i), do: rnd_select(l, i, [])
+  defp rnd_select([], _, res), do: res
+  defp rnd_select(_, i, res) when i <= 0 do
+    res
+  end
+  defp rnd_select(l, i, res) do
+    rand = length(l) |> :random.uniform
+    [h|t] = move_ahead(l, rand)
+    rnd_select(t, i - 1, [h|res])
+  end
+  defp move_ahead([h|t], 1), do: [h|t]
+  defp move_ahead([h|t], i) do
+    [h2|t2] =move_ahead(t, i - 1)
+    [h2, h | t2]
+  end
+
+  @doc ~S"""
+  P24 (*) Lotto: Draw N different random numbers from the set 1..M.
+
+  ## Examples
+    iex> Elixir_99.lotto_select(6, 49) |> length
+    6
+  """
+  @spec lotto_select(integer, integer) :: list
+  def lotto_select(n, m), do: range(1, m) |> rnd_select n
 end
