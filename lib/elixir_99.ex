@@ -597,4 +597,51 @@ defmodule Elixir_99 do
     Enum.map(comb, fn(c) -> length(c) end)
     |> Enum.reduce (fn(x, acc) -> x + acc end)
   end
+
+  # P28 (**) Sorting a list of lists according to length of sublists
+
+  @doc ~S"""
+  We suppose that a list contains elements that are lists themselves.
+  The objective is to sort the elements of this list according to their length. E.g. short lists first, longer lists later, or vice versa.
+
+  ## Examples
+    iex> Elixir_99.lsort [[:a, :b, :c], [:d, :e], [:f, :g, :h], [:d, :e], [:i, :j, :k, :l], [:m, :n], [:o]]
+    [[:o], [:d, :e], [:d, :e], [:m, :n], [:a, :b, :c], [:f, :g, :h], [:i, :j, :k, :l]]
+  """
+  @spec lsort(list) :: list
+  def lsort(l) do
+    Enum.sort l, (fn(l1, l2) ->
+      len1 = length(l1)
+      len2 = length(l2)
+      (len1 < len2) or (len1 == len2 and l1 < l2)
+    end)
+  end
+
+  @doc ~S"""
+  Again, we suppose that a list contains elements that are lists themselves.
+  But this time the objective is to sort the elements of this list according to their length frequency;
+  i.e., in the default, where sorting is done ascendingly, lists with rare lengths are placed first, others with a more frequent length come later.
+
+  ## Examples
+    iex> Elixir_99.lfsort [[:a, :b, :c], [:d, :e], [:f, :g, :h], [:d, :e], [:i, :j, :k, :l], [:m, :n], [:o]]
+    [[:i, :j, :k, :l], [:o], [:a, :b, :c], [:f, :g, :h], [:d, :e], [:d, :e], [:m, :n]]
+  """
+  @spec lfsort(list) :: list
+  def lfsort(l) do
+    f = freq(l)
+    Enum.sort l, (fn(l1, l2) ->
+      len1 = length(l1)
+      len2 = length(l2)
+      Dict.get(f, len1) <= Dict.get(f, len2)
+    end)
+  end
+  defp freq(l) do
+    Enum.reduce l, HashDict.new, (fn(x, dict) ->
+      len = length(x)
+      case Dict.get dict, len do
+        nil -> Dict.put dict, len, 1
+        x -> Dict.put dict, len, x + 1
+      end
+    end)
+  end
 end
