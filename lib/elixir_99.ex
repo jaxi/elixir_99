@@ -564,8 +564,9 @@ defmodule Elixir_99 do
   P27 (**) Group the elements of a set into disjoint subsets.
 
   ## Examples
+    iex> Elixir_99.group([:aldo, :beat, :carla, :david, :evi, :flip, :gary, :hugo, :ida], [2, 2, 5]) |> List.first
+    [[:aldo, :beat], [:carla, :david], [:evi, :flip, :gary, :hugo, :ida]]
   """
-
   @spec group(list, list) :: list
   def group(l, s), do: group(l, s, [], List.duplicate([], length(s)))
   defp group(l, s, res, proto) do
