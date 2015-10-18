@@ -273,7 +273,6 @@ defmodule Elixir_99 do
       end
     end)
   end
-  defp run_length_list([], {c, e}), do: [{c, e}]
   defp run_length_list([h|t], nil), do: encode_list(t, {1, h})
   defp run_length_list([h|t], {c, e}) do
     cond do
@@ -370,7 +369,7 @@ defmodule Elixir_99 do
   defp split_list(l1, l2, i) when i <= 0 do
     [l1, l2]
   end
-  defp split_list(l1, [], i), do: [l1, []]
+  defp split_list(l1, [], _), do: [l1, []]
   defp split_list(l1, [h|t], i), do: split_list(l1 ++ [h], t, i - 1)
 
   @doc ~S"""
@@ -397,7 +396,50 @@ defmodule Elixir_99 do
   defp slice_list(l, _, j) do
     take([], l, j)
   end
-  defp take(r, [], n), do: r
+  defp take(r, [], _), do: r
   defp take(r, _, 0), do: r
   defp take(r, [h|t], n), do: take(r ++ [h], t, n - 1)
+
+  @doc ~S"""
+  P19 (**) Rotate a list N places to the left.
+
+  ## Examples
+    iex> Elixir_99.rotate [:a, :b, :c, :d, :e, :f, :g, :h], 3
+    [:d, :e, :f, :g, :h, :a, :b, :c]
+
+    iex> Elixir_99.rotate [:a, :b, :c, :d, :e, :f, :g, :h], -2
+    [:g, :h, :a, :b, :c, :d, :e, :f]
+
+    iex> Elixir_99.rotate [:a, :b, :c, :d, :e, :f, :g, :h], 9
+    [:a, :b, :c, :d, :e, :f, :g, :h]
+  """
+  @spec rotate(list, integer) :: list
+  def rotate(l, i) when i <= 0 do
+    rotate(l, length(l) + i)
+  end
+  def rotate(l, i) when i > length(l) do
+    l
+  end
+  def rotate(l, i) do
+    [l1, l2] = split(l, i)
+    Enum.concat(l2, l1)
+  end
+
+  @doc ~S"""
+  P20 (*) Remove the K'th element from a list.
+
+  ## Examples
+    iex> Elixir_99.remove_at [:a, :b, :c, :d], 2
+    [:a, :c, :d]
+
+    iex> Elixir_99.remove_at [:a, :b, :c, :d], 5
+    [:a, :b, :c, :d]
+  """
+  @spec remove_at(list, integer) :: list
+  def remove_at(l, i) when i <= 0 do
+    l
+  end
+  def remove_at([], 1), do: []
+  def remove_at([_|t], 1), do: t
+  def remove_at([h|t], i), do: [h | remove_at(t, i - 1)]
 end
