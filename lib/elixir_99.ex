@@ -263,6 +263,15 @@ defmodule Elixir_99 do
   ## Examples
     iex> Elixir_99.run_length [:a, :a, :a, :a, :b, :c, :c, :a, :a, :d, :e, :e, :e, :e ]
     [{4, :a}, :b , {2, :c}, {2, :a}, :d, {4, :e}]
+
+    iex> Elixir_99.run_length []
+    []
+
+    iex> Elixir_99.run_length [:a]
+    [:a]
+
+    iex> Elixir_99.run_length [:a, :a]
+    [{2, :a}]
   """
   @spec run_length(list) :: list
   def run_length(l) do
@@ -272,13 +281,6 @@ defmodule Elixir_99 do
         e -> e
       end
     end)
-  end
-  defp run_length_list([h|t], nil), do: encode_list(t, {1, h})
-  defp run_length_list([h|t], {c, e}) do
-    cond do
-      h == e -> encode_list(t, {c+1, e})
-      true -> [{c, e} | encode_list([h|t], nil)]
-    end
   end
 
   @doc ~S"""
@@ -442,4 +444,50 @@ defmodule Elixir_99 do
   def remove_at([], 1), do: []
   def remove_at([_|t], 1), do: t
   def remove_at([h|t], i), do: [h | remove_at(t, i - 1)]
+
+  @doc ~S"""
+  P21 (*) Insert an element at a given position into a list.
+
+  ## Examples
+    iex> Elixir_99.insert_at [:a, :b, :c, :d], :abc, 2
+    [:a, :abc, :c, :d]
+
+    iex> Elixir_99.insert_at [:a, :b, :c, :d], :abc, 4
+    [:a, :b, :c, :abc]
+
+    iex> Elixir_99.insert_at [:a, :b, :c, :d], :abc, 5
+    [:a, :b, :c, :d]
+
+    iex> Elixir_99.insert_at [:a, :b, :c, :d], :abc, 0
+    [:a, :b, :c, :d]
+  """
+  @spec insert_at(list, any, integer) :: list
+  def insert_at(l, _, i) when i <= 0 do
+    l
+  end
+  def insert_at([_|t], e, 1), do: [e|t]
+  def insert_at([], _, _), do: []
+  def insert_at([h|t], e, i), do: [h | insert_at(t, e, i - 1)]
+
+  @doc ~S"""
+  P22 (*) Create a list containing all integers within a given range.
+
+  ## Examples
+    iex> Elixir_99.range(4, 9)
+    [4, 5, 6, 7, 8, 9]
+
+    iex> Elixir_99.range(-3, 2)
+    [-3, -2, -1, 0, 1, 2]
+
+    iex> Elixir_99.range(2, 2)
+    [2]
+
+    iex> Elixir_99.range(3, 2)
+    []
+  """
+  @spec range(integer, integer) :: list
+  def range(i, j) when i > j do
+    []
+  end
+  def range(i, j), do: [i | range(i + 1, j)]
 end
