@@ -678,7 +678,6 @@ defmodule Elixir_99 do
   def gcd(a, b) do
     cond do
       b == 0 -> a
-      a < b  -> gcd(b, a)
       true -> gcd(b, rem(a, b))
     end
   end
