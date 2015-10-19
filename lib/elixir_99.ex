@@ -666,4 +666,68 @@ defmodule Elixir_99 do
       true -> 2..(n |> :math.sqrt |> round) |> Enum.all?(fn(i) -> rem(n, i) != 0 end)
     end
   end
+
+  @doc """
+  P32 (**) Determine the greatest common divisor of two positive integer numbers.
+
+  ## Examples
+    iex> Elixir_99.gcd(36, 63)
+    9
+  """
+  @spec gcd(integer, integer) :: integer
+  def gcd(a, b) do
+    cond do
+      b == 0 -> a
+      a < b  -> gcd(b, a)
+      true -> gcd(b, rem(a, b))
+    end
+  end
+
+  @doc ~S"""
+  P33 (*) Determine whether two positive integer numbers are coprime.
+
+  ## Examples
+    iex> Elixir_99.coprime 35, 54
+    true
+
+    iex> Elixir_99.coprime 7, 97
+    true
+
+    iex> Elixir_99.coprime 21, 14
+    false
+  """
+  @spec coprime(integer, integer) :: integer
+  def coprime(a, b), do: gcd(a, b) == 1
+
+  @doc ~S"""
+  P34 (**) Calculate Euler's totient function phi(m).
+
+  ## Examples
+    iex> Elixir_99.totient_phi 10
+    4
+
+    iex> Elixir_99.totient_phi 36
+    12
+  """
+  @spec totient_phi(integer) :: integer
+  def totient_phi(n) do
+    case n do
+      1 -> 1
+      _ ->
+        collect_prime(2, [], n)
+        |> (Enum.filter (fn(x) -> rem(n, x) == 0 end))
+        |> (Enum.reduce n, (fn(x, acc) -> acc * (x - 1)/ x end))
+        |> round
+    end
+  end
+  defp collect_prime(i, plist, n) do
+    cond do
+      i == n + 1 ->
+        plist
+      Enum.all?(plist, fn(p) -> rem(i, p) != 0 end) ->
+        collect_prime(i + 1, [i|plist], n)
+      true ->
+        collect_prime(i + 1, plist, n)
+    end
+  end
 end
