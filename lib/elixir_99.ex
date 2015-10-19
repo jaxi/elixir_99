@@ -644,4 +644,26 @@ defmodule Elixir_99 do
       end
     end)
   end
+
+  @doc ~S"""
+  P31 (**) Determine whether a given integer number is prime.
+
+  ## Examples
+    iex> Elixir_99.prime? 7
+    true
+
+    iex> Elixir_99.prime? 2
+    true
+
+    iex> Elixir_99.prime? 4
+    false
+  """
+  @spec prime?(integer) :: boolean
+  def prime?(n) do
+    cond do
+      n <= 1 -> false
+      n == 2 -> true
+      true -> 2..(n |> :math.sqrt |> round) |> Enum.all?(fn(i) -> rem(n, i) != 0 end)
+    end
+  end
 end
