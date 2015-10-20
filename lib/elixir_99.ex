@@ -729,4 +729,129 @@ defmodule Elixir_99 do
         collect_prime(i + 1, plist, n)
     end
   end
+
+  @doc ~S"""
+  P35 (**) Determine the prime factors of a given positive integer.
+
+  ## Examples
+    iex> Elixir_99.prime_factors 315
+    [3, 3, 5, 7]
+  """
+  @spec prime_factors(integer) :: list
+  def prime_factors(n) do
+    plist = collect_prime(2, [], n)
+    |> (Enum.filter fn(x) -> rem(n, x) == 0 end)
+    prime_factors(n, plist, [])
+  end
+  def prime_factors(n, plist, res) do
+    case n do
+      1 -> res
+      _ ->
+        [h|t] = plist
+        cond do
+          rem(n, h) == 0 -> prime_factors(div(n, h), plist, [h|res])
+          true -> prime_factors(n, t, res)
+        end
+    end
+  end
+
+  @doc ~S"""
+  P36 (**) Determine the prime factors of a given positive integer (2).
+
+  ## Examples
+   iex> Elixir_99.prime_factors_mult 315
+   [{3, 2}, {5, 1}, {7, 1}]
+  """
+  @spec prime_factors_mult(integer) :: list
+  def prime_factors_mult(n) do
+    plist = collect_prime(2, [], n)
+      |> (Enum.filter &(rem(n, &1) == 0))
+    pt = Enum.map(plist, &(p_times(n, &1, 0)))
+    Enum.zip(plist, pt) |> reverse
+  end
+  defp p_times(n, p, i) do
+    cond do
+      rem(n, p) == 0 -> p_times(div(n, p), p, i + 1)
+      true -> i
+    end
+  end
+
+  @doc ~S"""
+  P39 (*) A list of prime numbers.
+
+  ## Examples
+    iex> Elixir_99.prime_list(6, 15)
+    [7, 11, 13]
+  """
+  @spec prime_list(integer, integer) :: list
+  def prime_list(lower, upper) do
+    collect_prime(2, [], upper)
+    |> reverse
+    |> Enum.filter &(&1 >= lower)
+  end
+
+  @doc ~S"""
+  P40 (**) Goldbach's conjecture.
+
+  ## Examples
+    iex> Elixir_99.goldbach 28
+    {5, 23}
+  """
+  @spec goldbach(integer) :: list
+  def goldbach(n) do
+    plist = collect_prime(2, [], n) |> reverse
+    goldbach(n, plist)
+  end
+  defp goldbach(n, plist) do
+    p = Enum.find(plist, (fn(p) ->
+      Enum.find plist, &(&1 == n - p)
+    end))
+    case p do
+      nil -> nil
+      _ -> {p, n - p}
+    end
+  end
+
+  @doc ~S"""
+  P41 (**) A list of Goldbach compositions.
+
+  ## Examples
+    iex> Elixir_99.goldbach_list(9, 20)
+    [{3, 7}, {5, 7}, {3, 11}, {3, 13}, {5, 13}, {3, 17}]
+  """
+  @spec goldbach_list(integer, integer) :: list
+  def goldbach_list(lower, upper) do
+    [2|plist] = collect_prime(2, [], upper) |> reverse
+    goldbach_list(lower, upper, [], plist) |> reverse
+  end
+  defp goldbach_list(2, upper, res, plist), do: goldbach_list(4, upper, res, plist)
+  defp goldbach_list(lower, upper, res, plist) do
+    cond do
+      upper - lower < 0 -> res
+      rem(lower, 2) != 0 -> goldbach_list(lower + 1, upper, res, plist)
+      true ->
+        case goldbach(lower, plist) do
+          {a, b} -> goldbach_list(lower + 2, upper, [{a, b}|res], plist)
+          _ -> goldbach_list(lower + 2, upper, res, plist)
+        end
+    end
+  end
+
+  @doc ~S"""
+  In most cases, if an even number is written as the sum of two prime numbers,
+  one of them is very small. Very rarely, the primes are both bigger than say 50.
+  Try to find out how many such cases there are in the range 2..3000.
+
+  ## Examples
+    iex> Elixir_99.goldbach_list(1, 2000, 50) |> Enum.find(&(&1 == {73, 919}))
+    {73, 919}
+  """
+  @spec goldbach_list(integer, integer, integer) :: list
+  def goldbach_list(lower, upper, limit) do
+    plist = collect_prime(2, [], upper)
+      |> reverse
+      |> Enum.filter(&(&1 > limit and &1 > 2))
+
+    goldbach_list(lower, upper, [], plist) |> reverse
+  end
 end
