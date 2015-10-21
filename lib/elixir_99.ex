@@ -854,4 +854,41 @@ defmodule Elixir_99 do
 
     goldbach_list(lower, upper, [], plist) |> reverse
   end
+
+  @doc ~S"""
+  P46 (**) Truth tables for logical expressions.
+  Define predicates and/2, or/2, nand/2, nor/2, xor/2, impl/2 and equ/2
+  (for logical equivalence) which succeed or fail according to the result of their respective operations;
+  e.g. and(A,B) will succeed, if and only if both A and B succeed. Note that A and B
+  can be Prolog goals (not only the constants true and fail).
+  A logical expression in two variables can then be written in prefix notation,
+  as in the following example: and(or(A,B),nand(A,B)).
+
+  ## Examples
+    iex> Elixir_99.table([:a, :b], {:and, :a, {:or, :a, :b}})
+    [[true, true, true], [true, false, true], [false, true, false], [false, false, false]]
+  """
+  def table(l, pn) do
+    dl = gen_dict(l, HashDict.new, [])
+    Enum.map dl, (fn(d) ->
+      Enum.map(l, &(Dict.get(d, &1)))++ [prefix_notation_eval(pn, d)]
+    end)
+  end
+  def gen_dict(l, dict, res) do
+    case l do
+      [] -> [dict|res]
+      [h|t] ->
+        gen_dict(t, Dict.put(dict, h, true), res) ++ gen_dict(t, Dict.put(dict, h, false), res)
+    end
+  end
+  defp prefix_notation_eval({op, ln, rn}, dict) do
+    lv = prefix_notation_eval(ln, dict)
+    rv = prefix_notation_eval(rn, dict)
+
+    case op do
+      :and -> lv and rv
+      :or -> lv or rv
+    end
+  end
+  defp prefix_notation_eval(v, dict), do: HashDict.get(dict, v)
 end
