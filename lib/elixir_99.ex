@@ -891,4 +891,25 @@ defmodule Elixir_99 do
     end
   end
   defp prefix_notation_eval(v, dict), do: HashDict.get(dict, v)
+
+  @doc ~S"""
+  P49 (**) Gray code.
+  An n-bit Gray code is a sequence of n-bit strings constructed according to certain rules. For example,
+
+  ## Examples
+    iex> Elixir_99.grey(1)
+    ["0", "1"]
+
+    iex> Elixir_99.grey(2)
+    ["00","01","11","10"]
+
+    iex> Elixir_99.grey(3)
+    ["000","001","011","010","110","111","101","100"]
+  """
+  def grey(1), do: ["0", "1"]
+  def grey(n) do
+    previous_code = grey(n - 1)
+    Enum.map(previous_code, &("0" <> &1))
+      ++ (previous_code |> Enum.reverse |> Enum.map &("1" <> &1))
+  end
 end
