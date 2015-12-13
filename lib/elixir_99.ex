@@ -906,10 +906,11 @@ defmodule Elixir_99 do
     iex> Elixir_99.grey(3)
     ["000","001","011","010","110","111","101","100"]
   """
-  def grey(1), do: ["0", "1"]
-  def grey(n) do
-    previous_code = grey(n - 1)
-    Enum.map(previous_code, &("0" <> &1))
-      ++ (previous_code |> Enum.reverse |> Enum.map &("1" <> &1))
+  def grey(n), do: grey(1, n, ["0", "1"])
+  defp grey(n, n, prev), do: prev
+  defp grey(m, n, prev) do
+    res = (prev |> Enum.map &("0" <> &1)) ++
+      (prev |> Enum.reverse |> Enum.map &("1" <> &1))
+    grey(m + 1, n, res)
   end
 end
