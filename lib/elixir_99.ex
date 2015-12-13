@@ -913,4 +913,21 @@ defmodule Elixir_99 do
       (prev |> Enum.reverse |> Enum.map &("1" <> &1))
     grey(m + 1, n, res)
   end
+
+  @doc ~S"""
+  P54A (*) Check whether a given term represents a binary tree
+
+  # Examples
+    iex> Elixir_99.is_tree {:a, {:b, nil, nil}, nil}
+    true
+
+    iex> Elixir_99.is_tree {:a, {:b, nil, nil}}
+    false
+  """
+
+  def is_tree({node, left, right}) do
+    is_atom(node) && is_tree(left) && is_tree(right)
+  end
+  def is_tree(nil), do: true
+  def is_tree(_), do: false
 end
