@@ -337,13 +337,13 @@ defmodule Elixir_99 do
     l
   end
   def drop(l, n) do
-    l |> Enum.with_index |> Enum.filter_map (fn(e) ->
+    l |> Enum.with_index |> Enum.filter_map((fn(e) ->
       {_, i } = e
       rem(i + 1, n) != 0
     end), (fn(e) ->
       {ele, _} = e
       ele
-    end)
+    end))
   end
 
   @doc ~S"""
@@ -523,7 +523,7 @@ defmodule Elixir_99 do
     6
   """
   @spec lotto_select(integer, integer) :: list
-  def lotto_select(n, m), do: range(1, m) |> rnd_select n
+  def lotto_select(n, m), do: range(1, m) |> rnd_select(n)
 
   @doc ~S"""
   P25 (*) Generate a random permutation of the elements of a list.
@@ -583,7 +583,7 @@ defmodule Elixir_99 do
     end
   end
   defp possible_fill(l, ele) do
-    l |> Enum.with_index |> Enum.map (fn({e, index}) ->
+    l |> Enum.with_index |> Enum.map(fn({e, index}) ->
       List.update_at l, index, (fn(_) -> e ++ [ele] end)
     end)
   end
@@ -595,7 +595,7 @@ defmodule Elixir_99 do
   end
   def capacity(comb) do
     Enum.map(comb, fn(c) -> length(c) end)
-    |> Enum.reduce (fn(x, acc) -> x + acc end)
+    |> Enum.reduce(fn(x, acc) -> x + acc end)
   end
 
   # P28 (**) Sorting a list of lists according to length of sublists
@@ -787,7 +787,7 @@ defmodule Elixir_99 do
   def prime_list(lower, upper) do
     collect_prime(2, [], upper)
     |> reverse
-    |> Enum.filter &(&1 >= lower)
+    |> Enum.filter(&(&1 >= lower))
   end
 
   @doc ~S"""
@@ -909,8 +909,8 @@ defmodule Elixir_99 do
   def grey(n), do: grey(1, n, ["0", "1"])
   defp grey(n, n, prev), do: prev
   defp grey(m, n, prev) do
-    res = (prev |> Enum.map &("0" <> &1)) ++
-      (prev |> Enum.reverse |> Enum.map &("1" <> &1))
+    res = (prev |> Enum.map(&("0" <> &1))) ++
+      (prev |> Enum.reverse |> Enum.map(&("1" <> &1)))
     grey(m + 1, n, res)
   end
 
