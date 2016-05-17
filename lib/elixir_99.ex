@@ -924,4 +924,37 @@ defmodule Elixir_99 do
   end
   def is_tree(nil), do: true
   def is_tree(_), do: false
+
+  @doc ~S"""
+  P55 (**) Construct completely balanced binary trees
+  In a completely balanced binary tree, the following property holds for every node:
+  The number of nodes in its left subtree and the number of nodes in its right subtree
+  are almost equal, which means their difference is not greater than one.
+
+  Write a function cbal-tree to construct completely balanced binary trees for a given
+  number of nodes. The predicate should generate all solutions via backtracking.
+  Put the letter 'x' as information into all nodes of the tree.
+
+  # Examples:
+    iex> Elixir_99.cbal_tree(4) |> length
+    4
+  """
+  def cbal_tree(0), do: [nil]
+  def cbal_tree(1), do: [{:x, nil, nil}]
+  def cbal_tree(n) do
+    if rem(n, 2) == 1 do
+      subtrees = cbal_tree(div(n - 1, 2))
+      concat_tree subtrees, subtrees
+    else
+      subtrees1 = cbal_tree(div(n - 1, 2))
+      subtrees2 = cbal_tree(div(n - 1, 2) + 1)
+      concat_tree(subtrees1, subtrees2) ++ concat_tree(subtrees2, subtrees1)
+    end
+  end
+
+  defp concat_tree(ltrees, rtrees) do
+    for lt <- ltrees do
+      for rt <- rtrees, do: {:x, lt, rt}
+    end |> List.flatten
+  end
 end
