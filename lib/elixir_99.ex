@@ -438,9 +438,7 @@ defmodule Elixir_99 do
     [:a, :b, :c, :d]
   """
   @spec remove_at(list, integer) :: list
-  def remove_at(l, i) when i <= 0 do
-    l
-  end
+  def remove_at(l, i) when i <= 0, do: l
   def remove_at([], 1), do: []
   def remove_at([_|t], 1), do: t
   def remove_at([h|t], i), do: [h | remove_at(t, i - 1)]
@@ -462,9 +460,7 @@ defmodule Elixir_99 do
     [:a, :b, :c, :d]
   """
   @spec insert_at(list, any, integer) :: list
-  def insert_at(l, _, i) when i <= 0 do
-    l
-  end
+  def insert_at(l, _, i) when i <= 0, do: l
   def insert_at([_|t], e, 1), do: [e|t]
   def insert_at([], _, _), do: []
   def insert_at([h|t], e, i), do: [h | insert_at(t, e, i - 1)]
@@ -486,9 +482,7 @@ defmodule Elixir_99 do
     []
   """
   @spec range(integer, integer) :: list
-  def range(i, j) when i > j do
-    []
-  end
+  def range(i, j) when i > j, do: []
   def range(i, j), do: [i | range(i + 1, j)]
 
   @doc ~S"""
@@ -593,7 +587,7 @@ defmodule Elixir_99 do
   defp exceed_capacity?(subset, comb) do
     List.zip([subset, comb]) |> Enum.any?(fn({s, c}) -> s < length(c) end)
   end
-  def capacity(comb) do
+  defp capacity(comb) do
     Enum.map(comb, fn(c) -> length(c) end)
     |> Enum.reduce(fn(x, acc) -> x + acc end)
   end
