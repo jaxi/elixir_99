@@ -957,4 +957,25 @@ defmodule Elixir_99 do
       for rt <- rtrees, do: {:x, lt, rt}
     end |> List.flatten
   end
+
+  @doc ~S"""
+  P56 (**) Symmetric binary trees
+  Let us call a binary tree symmetric if you can draw a vertical line through the root
+  node and then the right subtree is the mirror image of the left subtree. Write a
+  predicate symmetric/1 to check whether a given binary tree is symmetric.
+
+  # Examples:
+    iex> Elixir_99.symmetric_tree?({:node, nil, {:node, nil, nil}})
+    false
+
+    iex> Elixir_99.symmetric_tree?({:node, {:node, {:node, nil, nil}, \
+    {:node, {:node, nil, nil}, nil}}, {:node, {:node, nil, {:node, nil, nil}}, \
+    {:node, nil, nil}}})
+    true
+  """
+  def symmetric_tree?(nil), do: true
+  def symmetric_tree?({:node, lt, rt}), do: symmetric_tree?(lt, rt)
+  defp symmetric_tree?(t1, t2), do: t1 == symmetric_tree(t2)
+  defp symmetric_tree(nil), do: nil
+  defp symmetric_tree({:node, lt, rt}), do: {:node, symmetric_tree(rt), symmetric_tree(lt)}
 end
