@@ -333,9 +333,7 @@ defmodule Elixir_99 do
     [1, 2, 3]
   """
   @spec drop(list, integer) :: list
-  def drop(l, i) when i <= 0 do
-    l
-  end
+  def drop(l, i) when i <= 0, do: l
   def drop(l, n) do
     l |> Enum.with_index |> Enum.filter_map((fn(e) ->
       {_, i } = e
@@ -389,15 +387,9 @@ defmodule Elixir_99 do
   """
   @spec slice(list, integer, integer) :: list
   def slice(l, i, j), do: slice_list(l, i, j)
-  defp slice_list(_, i, j) when (i > j or i <= 0) do
-    []
-  end
-  defp slice_list([_|t], i, j) when i > 1 do
-    slice_list(t, i - 1, j - 1)
-  end
-  defp slice_list(l, _, j) do
-    take([], l, j)
-  end
+  defp slice_list(_, i, j) when (i > j or i <= 0), do: []
+  defp slice_list([_|t], i, j) when i > 1, do: slice_list(t, i - 1, j - 1)
+  defp slice_list(l, _, j), do: take([], l, j)
   defp take(r, [], _), do: r
   defp take(r, _, 0), do: r
   defp take(r, [h|t], n), do: take(r ++ [h], t, n - 1)
@@ -416,12 +408,8 @@ defmodule Elixir_99 do
     [:a, :b, :c, :d, :e, :f, :g, :h]
   """
   @spec rotate(list, integer) :: list
-  def rotate(l, i) when i <= 0 do
-    rotate(l, length(l) + i)
-  end
-  def rotate(l, i) when i > length(l) do
-    l
-  end
+  def rotate(l, i) when i <= 0, do: rotate(l, length(l) + i)
+  def rotate(l, i) when i > length(l), do: l
   def rotate(l, i) do
     [l1, l2] = split(l, i)
     Enum.concat(l2, l1)
@@ -495,9 +483,7 @@ defmodule Elixir_99 do
   @spec rnd_select(list, integer) :: list
   def rnd_select(l, i), do: rnd_select(l, i, [])
   defp rnd_select([], _, res), do: res
-  defp rnd_select(_, i, res) when i <= 0 do
-    res
-  end
+  defp rnd_select(_, i, res) when i <= 0, do: res
   defp rnd_select(l, i, res) do
     rand = length(l) |> :random.uniform
     [h|t] = move_ahead(l, rand)
@@ -544,12 +530,8 @@ defmodule Elixir_99 do
   """
   @spec combination(list, integer) :: list
   def combination(l, k), do: combination(l, k, [], [])
-  defp combination(l, k, res, proto) when k > length(l) + length(proto) do
-    res
-  end
-  defp combination(_, k, res, proto) when length(proto) == k do
-    res ++ [proto]
-  end
+  defp combination(l, k, res, proto) when k > length(l) + length(proto), do: res
+  defp combination(_, k, res, proto) when length(proto) == k, do: res ++ [proto]
   defp combination([h|t], k, res, proto) do
     combination(t, k, res, proto ++ [h]) ++ combination(t, k, res, proto)
   end
@@ -919,9 +901,7 @@ defmodule Elixir_99 do
     false
   """
 
-  def is_tree({node, left, right}) do
-    is_atom(node) && is_tree(left) && is_tree(right)
-  end
+  def is_tree({node, left, right}), do: is_atom(node) && is_tree(left) && is_tree(right)
   def is_tree(nil), do: true
   def is_tree(_), do: false
 
